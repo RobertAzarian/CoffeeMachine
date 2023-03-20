@@ -5,18 +5,39 @@ import java.util.Scanner;
 public class CoffeeMachine {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int waterNeeds; // 200ml
-        int milkNeeds; // 50ml
-        int coffeeBeansNeeds; // 15g
+        int hasWater;
+        int hasMilk;
+        int hasCoffeeBeans;
+        int hasCupsCount;
+        int cupsNeeded;
 
+        // How many supplies coffee machine has
+        System.out.println("Write how many ml of water the coffee machine has:");
+        hasWater = scanner.nextInt();
+        System.out.println("Write how many ml of milk the coffee machine has:");
+        hasMilk = scanner.nextInt();
+        System.out.println("Write how many grams of coffee beans the coffee machine has:");
+        hasCoffeeBeans = scanner.nextInt();
+
+        hasCupsCount = getCountCupsOfCoffee(hasWater, hasMilk, hasCoffeeBeans);
         System.out.println("Write how many cups of coffee you will need:");
-        int cupsCount = scanner.nextInt();
-        waterNeeds = 200 * cupsCount;
-        milkNeeds = 50 * cupsCount;
-        coffeeBeansNeeds = 15 * cupsCount;
-        System.out.printf("For %d cups of coffee you will need:\n", cupsCount);
-        System.out.printf("%d ml of water\n", waterNeeds);
-        System.out.printf("%d ml of milk\n", milkNeeds);
-        System.out.printf("%d g of coffee beans\n", coffeeBeansNeeds);
+        cupsNeeded = scanner.nextInt();
+        if (cupsNeeded == hasCupsCount) {
+            System.out.println("Yes, I can make that amount of coffee");
+        } else if (cupsNeeded < hasCupsCount) {
+            System.out.printf("Yes, I can make that amount of coffee (and even %d more than that)\n",
+                    hasCupsCount - cupsNeeded);
+        } else {
+            System.out.printf("No, I can make only %d cup(s) of coffee\n", hasCupsCount);
+        }
+    }
+
+    public static int getCountCupsOfCoffee(int hasWater, int hasMilk, int hasCoffeeBeans) {
+        int hasCupsCount;
+        int enoughWaterFor = hasWater / 200;
+        int enoughMilkFor = hasMilk / 50;
+        int enoughCoffeeBeansFor = hasCoffeeBeans / 15;
+        hasCupsCount = Math.min(enoughCoffeeBeansFor, Math.min(enoughWaterFor, enoughMilkFor));
+        return hasCupsCount;
     }
 }
