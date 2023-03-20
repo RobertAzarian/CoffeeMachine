@@ -11,56 +11,105 @@ public class CoffeeMachine {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        getInfo();
-        System.out.println("Write action (buy, fill, take): ");
-        String action = scanner.nextLine();
 
-        switch (action) {
-            case "buy" -> buy();
-            case "fill" -> fill();
-            case "take" -> take();
-            default -> System.out.println("wrong input");
+        boolean isRunning = true;
+        while (isRunning) {
+            System.out.println("Write action (buy, fill, take, remaining, exit):");
+            String action = scanner.nextLine();
+
+            System.out.println();
+            switch (action) {
+                case "buy" -> buy();
+                case "fill" -> fill();
+                case "take" -> take();
+                case "remaining" -> getInfo();
+                case "exit" -> isRunning = false;
+                default -> System.out.println("wrong input!");
+            }
         }
-
-        getInfo();
     }
     public static void buy() {
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:");
-        int choise = scanner.nextInt();
+        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
+        String choise = scanner.nextLine();
         CoffeeType coffeeType;
 
         switch (choise) {
-            case 1 -> coffeeType = CoffeeType.ESPRESSO;
-            case 2 -> coffeeType = CoffeeType.LATTE;
-            case 3 -> coffeeType = CoffeeType.CAPPUCCINO;
+            case "1" -> coffeeType = CoffeeType.ESPRESSO;
+            case "2" -> coffeeType = CoffeeType.LATTE;
+            case "3" -> coffeeType = CoffeeType.CAPPUCCINO;
+            case "back" -> {
+                return;
+            }
             default -> {
                 System.out.println("wrong input");
                 return;
             }
         }
-        water -= coffeeType.getWaterNeeds();
-        milk -= coffeeType.getMilkNeeds();
-        coffeeBeans -= coffeeType.getCoffeeBeansNeeds();
-        disposableCups--;
-        money += coffeeType.getPrice();
+        int watNeeds = coffeeType.getWaterNeeds();
+        int milkNeeds = coffeeType.getMilkNeeds();
+        int coffeeNeeds = coffeeType.getCoffeeBeansNeeds();
+
+        if ((water >= watNeeds) && (milk >= milkNeeds) &&
+                (coffeeBeans >= coffeeNeeds) && (disposableCups > 0)) {
+            System.out.println("I have enough resources, making you a coffee!");
+            water -= watNeeds;
+            milk -= milkNeeds;
+            coffeeBeans -= coffeeNeeds;
+            disposableCups--;
+            money += coffeeType.getPrice();
+        } else {                            // NOT ENOUGH!
+            int i = 0;
+            String str;
+            String w = "";
+            String m = "";
+            String c = "";
+            String d = "";
+            if (water < watNeeds) {
+                i++;
+                w = "water";
+            }
+            if (milk < milkNeeds) {
+                i++;
+                m = "milk";
+            }
+            if (coffeeBeans < coffeeNeeds) {
+                i++;
+                c = "coffee beans";
+            }
+            if (disposableCups == 0) {
+                i++;
+                d = "disposable cups";
+            }
+
+            switch (i) {
+                case 1 -> str = "Sorry, not enough %s!";
+                case 2 -> str = "Sorry, not enough %s and %s!";
+                case 3 -> str = "Sorry, not enough %s, %s and %s!";
+                case 4 -> str = "Sorry, not enough %s, %s, %s and %s!";
+                default -> {
+                    return;
+                }
+            }
+            System.out.printf(str + "\n", w, m, c, d);
+        }
         System.out.println();
     }
 
     public static void fill() {
         System.out.println("Write how many ml of water you want to add:");
-        water += scanner.nextInt();
+        water += Integer.parseInt(scanner.nextLine());
         System.out.println("Write how many ml of milk you want to add:");
-        milk += scanner.nextInt();
+        milk += Integer.parseInt(scanner.nextLine());
         System.out.println("Write how many grams of coffee beans you want to add:");
-        coffeeBeans += scanner.nextInt();
+        coffeeBeans += Integer.parseInt(scanner.nextLine());
         System.out.println("Write how many disposable cups you want to add:");
-        disposableCups += scanner.nextInt();
+        disposableCups += Integer.parseInt(scanner.nextLine());
         System.out.println();
     }
 
     public static void take() {
+        System.out.printf("I gave you $%d\n", money);
         money = 0;
-        System.out.println("I gave you $550");
         System.out.println();
     }
 
