@@ -3,41 +3,76 @@ package machine;
 import java.util.Scanner;
 
 public class CoffeeMachine {
+    static int water = 400; // - ml
+    static int milk = 540; // - ml
+    static int coffeeBeans = 120; // - g
+    static int disposableCups = 9; // - count
+    static int money = 550; // - $
+    static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int hasWater;
-        int hasMilk;
-        int hasCoffeeBeans;
-        int hasCupsCount;
-        int cupsNeeded;
+        getInfo();
+        System.out.println("Write action (buy, fill, take): ");
+        String action = scanner.nextLine();
 
-        // How many supplies coffee machine has
-        System.out.println("Write how many ml of water the coffee machine has:");
-        hasWater = scanner.nextInt();
-        System.out.println("Write how many ml of milk the coffee machine has:");
-        hasMilk = scanner.nextInt();
-        System.out.println("Write how many grams of coffee beans the coffee machine has:");
-        hasCoffeeBeans = scanner.nextInt();
-
-        hasCupsCount = getCountCupsOfCoffee(hasWater, hasMilk, hasCoffeeBeans);
-        System.out.println("Write how many cups of coffee you will need:");
-        cupsNeeded = scanner.nextInt();
-        if (cupsNeeded == hasCupsCount) {
-            System.out.println("Yes, I can make that amount of coffee");
-        } else if (cupsNeeded < hasCupsCount) {
-            System.out.printf("Yes, I can make that amount of coffee (and even %d more than that)\n",
-                    hasCupsCount - cupsNeeded);
-        } else {
-            System.out.printf("No, I can make only %d cup(s) of coffee\n", hasCupsCount);
+        switch (action) {
+            case "buy" -> buy();
+            case "fill" -> fill();
+            case "take" -> take();
+            default -> System.out.println("wrong input");
         }
+
+        getInfo();
+    }
+    public static void buy() {
+        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:");
+        int choise = scanner.nextInt();
+        CoffeeType coffeeType;
+
+        switch (choise) {
+            case 1 -> coffeeType = CoffeeType.ESPRESSO;
+            case 2 -> coffeeType = CoffeeType.LATTE;
+            case 3 -> coffeeType = CoffeeType.CAPPUCCINO;
+            default -> {
+                System.out.println("wrong input");
+                return;
+            }
+        }
+        water -= coffeeType.getWaterNeeds();
+        milk -= coffeeType.getMilkNeeds();
+        coffeeBeans -= coffeeType.getCoffeeBeansNeeds();
+        disposableCups--;
+        money += coffeeType.getPrice();
+        System.out.println();
     }
 
-    public static int getCountCupsOfCoffee(int hasWater, int hasMilk, int hasCoffeeBeans) {
-        int hasCupsCount;
-        int enoughWaterFor = hasWater / 200;
-        int enoughMilkFor = hasMilk / 50;
-        int enoughCoffeeBeansFor = hasCoffeeBeans / 15;
-        hasCupsCount = Math.min(enoughCoffeeBeansFor, Math.min(enoughWaterFor, enoughMilkFor));
-        return hasCupsCount;
+    public static void fill() {
+        System.out.println("Write how many ml of water you want to add:");
+        water += scanner.nextInt();
+        System.out.println("Write how many ml of milk you want to add:");
+        milk += scanner.nextInt();
+        System.out.println("Write how many grams of coffee beans you want to add:");
+        coffeeBeans += scanner.nextInt();
+        System.out.println("Write how many disposable cups you want to add:");
+        disposableCups += scanner.nextInt();
+        System.out.println();
+    }
+
+    public static void take() {
+        money = 0;
+        System.out.println("I gave you $550");
+        System.out.println();
+    }
+
+    public static void getInfo() {
+        System.out.printf("""
+                The coffee machine has:
+                %d ml of water
+                %d ml of milk
+                %d g of coffee beans
+                %d disposable cups
+                $%d of money
+                
+                """, water, milk, coffeeBeans, disposableCups, money);
     }
 }
